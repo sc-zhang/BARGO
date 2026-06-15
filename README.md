@@ -8,6 +8,7 @@ For each $gene_g$, BARGO aggregates alignment evidence under a Bayesian decision
 
 ## Installation
 ```bash
+git clone https://github.com/sc-zhang/BARGO.git
 cd BARGO
 pip install -r requirements.txt
 chmod +x bargo.py
