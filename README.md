@@ -55,6 +55,8 @@ options:
 > geneA1    geneB1
 > geneA2    geneB2
 > ```
+> - Gene IDs in the homologous gene pair list must exactly match the gene identifiers in the GFF3 files, 
+> using the `Name` attribute when available, or the `ID` attribute otherwise.
 ## Result
 Several tsv file like below:
 ```text
