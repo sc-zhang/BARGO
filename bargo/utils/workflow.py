@@ -58,6 +58,7 @@ def processing(
                 "%d\t%s\t%s\t%f\t%f\t%f\t%s\n"
                 % (idx, geneA, geneB, pA, pB, conf, gene_class)
             )
+            idx += 1
 
     Message.info("\tDone.")
 
