@@ -48,6 +48,7 @@ def processing(
         else:
             gene_class = "Undetermined"
         info.append([idx, geneA, geneB, gene_class, conf, pA, pB])
+        idx += 1
 
     Message.info("\tWriting output file...")
     with open(out_file, "w") as f:
@@ -58,7 +59,6 @@ def processing(
                 "%d\t%s\t%s\t%f\t%f\t%f\t%s\n"
                 % (idx, geneA, geneB, pA, pB, conf, gene_class)
             )
-            idx += 1
 
     Message.info("\tDone.")
 
