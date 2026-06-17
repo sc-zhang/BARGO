@@ -37,7 +37,7 @@ def processing(
     for geneA, geneB in homolog.homo_pairs:
         reads_A = BamOperator.fetch_gene_reads(bamfile_A, gff3_A.gene_models[geneA])
         reads_B = BamOperator.fetch_gene_reads(bamfile_B, gff3_B.gene_models[geneB])
-        L, n_reads = compute_gene_scores_dual(reads_A, reads_B, min_mapq)
+        L, n_union, n_A, n_B = compute_gene_scores_dual(reads_A, reads_B, min_mapq)
         if L is None:
             gene_class = "Missing"
             conf = float("nan")
@@ -46,7 +46,7 @@ def processing(
             L = float("nan")
         else:
             pA, pB = posterior(L)
-            conf = confidence(L, n_reads)
+            conf = confidence(L, n_union)
             gene_class_val = classify(pA, pB, conf, tau, gamma)
             if gene_class_val == 0:
                 gene_class = parent_name_A
@@ -54,23 +54,37 @@ def processing(
                 gene_class = parent_name_B
             else:
                 gene_class = "Undetermined"
-        info.append([idx, geneA, geneB, n_reads, L, pA, pB, conf, gene_class])
+        info.append([idx, geneA, geneB, n_union, n_A, n_B, L, pA, pB, conf, gene_class])
         idx += 1
 
     Message.info("\tWriting output file...")
     with open(out_file, "w") as f:
         f.write("#Tau=%f, Gamma=%f\n" % (tau, gamma))
-        f.write("#GeneIdx\tRefA\tRefB\tn_reads\tL\tP_A\tP_B\tConfidence\tClass\n")
-        for idx, geneA, geneB, n_reads, L, pA, pB, conf, gene_class in info:
+        f.write(
+            "#GeneIdx\tRefA\tRefB\tn_union_reads\tn_A_reads\tn_B_reads\tL\tP_A\tP_B\tConfidence\tClass\n"
+        )
+        for idx, geneA, geneB, n_union, n_A, n_B, L, pA, pB, conf, gene_class in info:
             if gene_class == "Missing":
                 f.write(
-                    "%d\t%s\t%s\t%d\tNA\tNA\tNA\tNA\tMissing\n"
-                    % (idx, geneA, geneB, n_reads)
+                    "%d\t%s\t%s\t%d\t%d\t%d\tNA\tNA\tNA\tNA\tMissing\n"
+                    % (idx, geneA, geneB, n_union, n_A, n_B)
                 )
             else:
                 f.write(
-                    "%d\t%s\t%s\t%d\t%f\t%f\t%f\t%f\t%s\n"
-                    % (idx, geneA, geneB, n_reads, L, pA, pB, conf, gene_class)
+                    "%d\t%s\t%s\t%d\t%d\t%d\t%f\t%f\t%f\t%f\t%s\n"
+                    % (
+                        idx,
+                        geneA,
+                        geneB,
+                        n_union,
+                        n_A,
+                        n_B,
+                        L,
+                        pA,
+                        pB,
+                        conf,
+                        gene_class,
+                    )
                 )
 
     Message.info("\tDone.")

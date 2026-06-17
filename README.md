@@ -57,14 +57,16 @@ options:
 > ```
 > - Gene IDs in the homologous gene pair list must exactly match the gene identifiers in the GFF3 files, 
 > using the `Name` attribute when available, or the `ID` attribute otherwise.
+
+
 ## Result
-Several tsv file like below:
+For each sample, a tsv file would be found, the content would like below:
 ```text
 #Tau=0.700000, Gamma=0.300000
-#GeneIdx        RefA    RefB    P_A     P_B     Confidence      Class
-1       A000002       B000002       1.000000        0.000000        23.000000       A
-2       A000003       B000003       0.500000        0.500000        0.000000        Undetermined
-3       A000004       B000004       0.500000        0.500000        0.000000        Undetermined
-4       A000005       B000005       0.500000        0.500000        0.000000        Undetermined
-5       A000006       B000006       0.256246        0.743754        0.984848        B
+#GeneIdx	RefA	RefB	n_union_reads	n_A_reads	n_B_reads	L	P_A	P_B	Confidence	Class
+1	A000002	B000002	24	24	16	48.750000	1.000000	0.000000	40.344828	A
+2	A000003	B000003	35	35	35	0.000000	0.500000	0.500000	0.000000	Undetermined
+3	A000004	B000004	44	44	44	-1.272727	0.218791	0.781209	1.142857	B
+4	A000005	B000005	7	7	7	0.000000	0.500000	0.500000	0.000000	Undetermined
+5	A000006	B000006	35	35	35	-0.714286	0.328653	0.671347	0.625000	Undetermined
 ```

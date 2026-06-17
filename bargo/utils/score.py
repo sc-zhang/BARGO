@@ -12,12 +12,15 @@ def alignment_score(read, min_mapq=20):
 
 def compute_gene_scores_dual(reads_A, reads_B, min_mapq=20):
     read_dict = defaultdict(lambda: [0.0, 0.0])
+    read_set_A = set()
+    read_set_B = set()
     for read in reads_A:
         qname = read.query_name
         s = alignment_score(read, min_mapq)
         if s is None:
             continue
         read_dict[qname][0] = s
+        read_set_A.add(qname)
 
     for read in reads_B:
         qname = read.query_name
@@ -25,13 +28,14 @@ def compute_gene_scores_dual(reads_A, reads_B, min_mapq=20):
         if s is None:
             continue
         read_dict[qname][1] = s
+        read_set_B.add(qname)
     deltas = []
     for sa, sb in read_dict.values():
         deltas.append(sa - sb)
     if len(deltas) == 0:
-        return None, 0
+        return None, 0, 0, 0
     L = np.mean(deltas)
-    return L, len(deltas)
+    return L, len(deltas), len(read_set_A), len(read_set_B)
 
 
 def posterior(L):
