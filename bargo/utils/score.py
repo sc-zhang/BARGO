@@ -29,7 +29,7 @@ def compute_gene_scores_dual(reads_A, reads_B, min_mapq=20):
     for sa, sb in read_dict.values():
         deltas.append(sa - sb)
     if len(deltas) == 0:
-        return 0.0, 0
+        return None, 0
     L = np.mean(deltas)
     return L, len(deltas)
 

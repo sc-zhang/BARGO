@@ -38,27 +38,40 @@ def processing(
         reads_A = BamOperator.fetch_gene_reads(bamfile_A, gff3_A.gene_models[geneA])
         reads_B = BamOperator.fetch_gene_reads(bamfile_B, gff3_B.gene_models[geneB])
         L, n_reads = compute_gene_scores_dual(reads_A, reads_B, min_mapq)
-        pA, pB = posterior(L)
-        conf = confidence(L, n_reads)
-        gene_class_val = classify(pA, pB, conf, tau, gamma)
-        if gene_class_val == 0:
-            gene_class = parent_name_A
-        elif gene_class_val == 1:
-            gene_class = parent_name_B
+        if L is None:
+            gene_class = "Missing"
+            conf = float("nan")
+            pA = float("nan")
+            pB = float("nan")
+            L = float("nan")
         else:
-            gene_class = "Undetermined"
-        info.append([idx, geneA, geneB, gene_class, conf, pA, pB])
+            pA, pB = posterior(L)
+            conf = confidence(L, n_reads)
+            gene_class_val = classify(pA, pB, conf, tau, gamma)
+            if gene_class_val == 0:
+                gene_class = parent_name_A
+            elif gene_class_val == 1:
+                gene_class = parent_name_B
+            else:
+                gene_class = "Undetermined"
+        info.append([idx, geneA, geneB, n_reads, L, pA, pB, conf, gene_class])
         idx += 1
 
     Message.info("\tWriting output file...")
     with open(out_file, "w") as f:
         f.write("#Tau=%f, Gamma=%f\n" % (tau, gamma))
-        f.write("#GeneIdx\tRefA\tRefB\tP_A\tP_B\tConfidence\tClass\n")
-        for idx, geneA, geneB, gene_class, conf, pA, pB in info:
-            f.write(
-                "%d\t%s\t%s\t%f\t%f\t%f\t%s\n"
-                % (idx, geneA, geneB, pA, pB, conf, gene_class)
-            )
+        f.write("#GeneIdx\tRefA\tRefB\tn_reads\tL\tP_A\tP_B\tConfidence\tClass\n")
+        for idx, geneA, geneB, n_reads, L, pA, pB, conf, gene_class in info:
+            if gene_class == "Missing":
+                f.write(
+                    "%d\t%s\t%s\t%d\tNA\tNA\tNA\tNA\tMissing\n"
+                    % (idx, geneA, geneB, n_reads)
+                )
+            else:
+                f.write(
+                    "%d\t%s\t%s\t%d\t%f\t%f\t%f\t%f\t%s\n"
+                    % (idx, geneA, geneB, n_reads, L, pA, pB, conf, gene_class)
+                )
 
     Message.info("\tDone.")
 
