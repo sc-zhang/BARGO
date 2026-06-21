@@ -9,6 +9,8 @@ def get_opts():
     group.add_argument("-B", help="Input bam directory of parent B", required=True)
     group.add_argument("--A_gff3", help="Input gff3 file of parent A", required=True)
     group.add_argument("--B_gff3", help="Input gff3 file of parent B", required=True)
+    group.add_argument("--A_cds", help="Input CDS file of parent A")
+    group.add_argument("--B_cds", help="Input CDS file of parent B")
     group.add_argument(
         "-l", "--list", help="Input homologous gene pair list", required=True
     )

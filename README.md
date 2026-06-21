@@ -16,7 +16,7 @@ chmod +x bargo.py
 
 ## Usage
 ```bash
-usage: bargo.py [-h] -A A -B B --A_gff3 A_GFF3 --B_gff3 B_GFF3 -l LIST [--labels LABELS] [--tau TAU] [--gamma GAMMA] [--min_mapq MIN_MAPQ] -o OUTPUT [-t THREADS] [--version]
+usage: bargo.py [-h] -A A -B B --A_gff3 A_GFF3 --B_gff3 B_GFF3 [--A_cds A_CDS] [--B_cds B_CDS] -l LIST [--labels LABELS] [--tau TAU] [--gamma GAMMA] [--min_mapq MIN_MAPQ] -o OUTPUT [-t THREADS] [--version]
 
 options:
   -h, --help            show this help message and exit
@@ -24,6 +24,8 @@ options:
   -B B                  Input bam directory of parent B
   --A_gff3 A_GFF3       Input gff3 file of parent A
   --B_gff3 B_GFF3       Input gff3 file of parent B
+  --A_cds A_CDS         Input CDS file of parent A
+  --B_cds B_CDS         Input CDS file of parent B
   -l, --list LIST       Input homologous gene pair list
   --labels LABELS       Name of parents, comma split, default="A,B"
   --tau TAU             Posterior decision threshold, default=0.7
@@ -57,9 +59,19 @@ options:
 > ```
 > - Gene IDs in the homologous gene pair list must exactly match the gene identifiers in the GFF3 files, 
 > using the `Name` attribute when available, or the `ID` attribute otherwise.
+> - If parental CDS files are provided, the gene IDs in the CDS files must exactly correspond to those specified 
+> in the homologous gene file. Homologous gene pairs sharing identical CDS sequences will be automatically 
+> annotated as `Same`.
 
 
 ## Result
+Genes are classified into one of the following five categories based on their similarity to the two parental genomes:
+- **A**: The gene is more similar to the homologous gene in parent A.
+- **B**: The gene is more similar to the homologous gene in parent B.
+- **Same**: The homologous genes in parents A and B have identical CDS sequences.
+- **Undetermined**: The gene cannot be confidently assigned to either parent A or parent B.
+- **Missing**: The gene is not detected in the sample.
+
 For each sample, a tsv file would be found, the content would like below:
 ```text
 #Tau=0.700000, Gamma=0.300000

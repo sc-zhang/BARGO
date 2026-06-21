@@ -11,6 +11,8 @@ def processing(
     bamfile_B,
     gff3_file_A,
     gff3_file_B,
+    cds_file_A,
+    cds_file_B,
     homo_list_file,
     parent_name_A,
     parent_name_B,
@@ -26,6 +28,13 @@ def processing(
 
     gff3_A.read_gff3()
     gff3_B.read_gff3()
+
+    Message.info("\tLoading CDS...")
+    cds_A = FastaIO(cds_file_A)
+    cds_B = FastaIO(cds_file_B)
+
+    cds_A.read_fasta()
+    cds_B.read_fasta()
 
     Message.info("\tProcessing BAM...")
     homolog = Homolog(homo_list_file)
@@ -54,6 +63,8 @@ def processing(
                 gene_class = parent_name_B
             else:
                 gene_class = "Undetermined"
+        if geneA in cds_A.fa_db and geneB in cds_B.fa_db and cds_A.fa_db[geneA] == cds_B.fa_db[geneB]:
+            gene_class = "Same"
         info.append([idx, geneA, geneB, n_union, n_A, n_B, L, pA, pB, conf, gene_class])
         idx += 1
 
@@ -95,6 +106,12 @@ def pipeline(opts):
     parentB = opts.B
     A_gff3 = opts.A_gff3
     B_gff3 = opts.B_gff3
+    A_cds = opts.A_cds
+    if not A_cds:
+        A_cds = ""
+    B_cds = opts.B_cds
+    if not B_cds:
+        B_cds = ""
     homo_list = opts.list
     tau = opts.tau
     gamma = opts.gamma
@@ -125,6 +142,8 @@ def pipeline(opts):
                 full_path_B,
                 A_gff3,
                 B_gff3,
+                A_cds,
+                B_cds,
                 homo_list,
                 parent_names[0],
                 parent_names[1],

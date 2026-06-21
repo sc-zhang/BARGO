@@ -1,6 +1,25 @@
 import pysam
 
 
+class FastaIO:
+    def __init__(self, fasta_file: str):
+        self.fasta_file = fasta_file
+        self.fa_db = {}
+
+    def read_fasta(self):
+        if self.fasta_file != "":
+            with open(self.fasta_file, "r") as f:
+                for line in f:
+                    if line[0] == ">":
+                        gid = line.strip().split()[0][1:]
+                        self.fa_db[gid] = []
+                    else:
+                        self.fa_db[gid].append(line.strip())
+
+            for gid in self.fa_db:
+                self.fa_db[gid] = "".join(self.fa_db[gid])
+
+
 class GeneModel:
     def __init__(self, chrom, cds_regions: list):
         self.chrom = chrom
