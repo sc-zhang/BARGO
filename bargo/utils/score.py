@@ -10,43 +10,43 @@ def alignment_score(read, min_mapq=20):
     return as_score
 
 
-def compute_gene_scores_dual(reads_A, reads_B, min_mapq=20):
+def compute_gene_scores_dual(reads_a, reads_b, min_mapq=20):
     read_dict = defaultdict(lambda: [0.0, 0.0])
-    read_set_A = set()
-    read_set_B = set()
-    for read in reads_A:
+    read_set_a = set()
+    read_set_b = set()
+    for read in reads_a:
         qname = read.query_name
         s = alignment_score(read, min_mapq)
         if s is None:
             continue
         read_dict[qname][0] = s
-        read_set_A.add(qname)
+        read_set_a.add(qname)
 
-    for read in reads_B:
+    for read in reads_b:
         qname = read.query_name
         s = alignment_score(read, min_mapq)
         if s is None:
             continue
         read_dict[qname][1] = s
-        read_set_B.add(qname)
+        read_set_b.add(qname)
     deltas = []
     for sa, sb in read_dict.values():
         deltas.append(sa - sb)
     if len(deltas) == 0:
         return None, 0, 0, 0
     L = np.mean(deltas)
-    return L, len(deltas), len(read_set_A), len(read_set_B)
+    return L, len(deltas), len(read_set_a), len(read_set_b)
 
 
 def posterior(L):
     if L >= 0:
         z = np.exp(-L)
-        pA = 1.0 / (1.0 + z)
+        p_a = 1.0 / (1.0 + z)
     else:
         z = np.exp(L)
-        pA = z / (1.0 + z)
-    pB = 1.0 - pA
-    return pA, pB
+        p_a = z / (1.0 + z)
+    p_b = 1.0 - p_a
+    return p_a, p_b
 
 
 def confidence(L, n_reads):
@@ -54,11 +54,11 @@ def confidence(L, n_reads):
 
 
 # 0: class A, 1: class B, 2: undetermined
-def classify(pA, pB, conf, tau=0.7, gamma=0.3):
+def classify(p_a, p_b, conf, tau=0.7, gamma=0.3):
     if conf < gamma:
         return 2
-    if pA > tau:
+    if p_a > tau:
         return 0
-    if pB > tau:
+    if p_b > tau:
         return 1
     return 2

@@ -57,16 +57,17 @@ class GFF3:
                     self.gene_models[gene_id].cds_regions.append([start, end])
 
 
-class Homolog:
-    def __init__(self, homolog_file: str):
-        self.homolog_file = homolog_file
-        self.homo_pairs = []
+class GenePair:
+    def __init__(self, pair_file: str):
+        self.pair_file = pair_file
+        self.pairs = []
 
-    def read_homolog(self):
-        with open(self.homolog_file, "r") as f:
-            for line in f:
-                data = line.strip().split("\t")
-                self.homo_pairs.append([data[0], data[1]])
+    def read_pairs(self):
+        if self.pair_file != "":
+            with open(self.pair_file, "r") as f:
+                for line in f:
+                    data = line.strip().split("\t")
+                    self.pairs.append([data[0], data[1]])
 
 
 class BamOperator:
