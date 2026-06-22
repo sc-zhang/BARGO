@@ -68,7 +68,7 @@ options:
 Genes are classified into one of the following five categories based on their similarity to the two parental genomes:
 - **A**: The gene is more similar to the homologous gene in parent A.
 - **B**: The gene is more similar to the homologous gene in parent B.
-- **Same**: The homologous genes in parents A and B have identical CDS sequences.
+- **Identical**: The homologous genes in parents A and B have identical CDS sequences.
 - **Undetermined**: The gene cannot be confidently assigned to either parent A or parent B.
 - **Missing**: The gene is not detected in the sample.
 

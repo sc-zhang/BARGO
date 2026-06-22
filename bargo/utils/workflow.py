@@ -63,7 +63,7 @@ def processing(
             else:
                 gene_class = "Undetermined"
         if tuple([geneA, geneB]) in identical_cds_set:
-            gene_class = "Same"
+            gene_class = "Identical"
         info.append(
             [idx, geneA, geneB, n_union, n_a, n_b, L, p_a, p_b, conf, gene_class]
         )
